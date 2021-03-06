@@ -74,7 +74,7 @@ public class PotionHandler implements CustomHttpHandler {
         JSONObject requestBody = getRequestBody(httpExchange);
 
         Effect effect;
-        int duration;
+        int durationInSeconds;
         try {
             String effectName = requestBody.getString(EFFECT);
 
@@ -95,7 +95,7 @@ public class PotionHandler implements CustomHttpHandler {
         }
         try {
 
-            duration = requestBody.getInt(DURATION);
+            durationInSeconds = requestBody.getInt(DURATION);
         } catch (JSONException e) {
 
 
@@ -103,7 +103,8 @@ public class PotionHandler implements CustomHttpHandler {
             return;
         }
 
-        player.addPotionEffect(new EffectInstance(effect, duration, 0));
+        // EffectInstance expects a duration in ticks (1 tick = 1/20 second)
+        player.addPotionEffect(new EffectInstance(effect, durationInSeconds * 20, 0));
         handleResponse(httpExchange, 200, "");
     }
 
