@@ -75,8 +75,8 @@ public class PotionHandler implements CustomHttpHandler {
 
         Effect effect;
         int durationInSeconds;
+        String effectName = requestBody.getString(EFFECT);
         try {
-            String effectName = requestBody.getString(EFFECT);
 
             if (effectName == null) {
                 handleResponse(httpExchange, 400, "effect is missing");
@@ -103,9 +103,14 @@ public class PotionHandler implements CustomHttpHandler {
             return;
         }
 
+        String redeemedBy = requestBody.getString("redeemedBy");
+        String rewardCost = requestBody.getString("rewardCost");
+
         // EffectInstance expects a duration in ticks (1 tick = 1/20 second)
         player.addPotionEffect(new EffectInstance(effect, durationInSeconds * 20, 0));
-        handleResponse(httpExchange, 200, "");
+        Minecraft.getInstance().player.sendChatMessage("User " + redeemedBy + " applied " + effectName.toLowerCase().replaceAll("_", " ") + " potion effect for " + rewardCost + " channel points !");
+        handleResponse(httpExchange, 200, "Potion effect successfully applied");
+
     }
 
     private JSONObject getRequestBody(HttpExchange httpExchange) throws IOException {
