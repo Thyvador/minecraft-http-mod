@@ -109,7 +109,8 @@ public class PotionHandler implements CustomHttpHandler {
         // EffectInstance expects a duration in ticks (1 tick = 1/20 second)
         player.addPotionEffect(new EffectInstance(effect, durationInSeconds * 20, 0));
         Minecraft.getInstance().player.sendChatMessage("User " + redeemedBy + " applied " + effectName.toLowerCase().replaceAll("_", " ") + " potion effect for " + rewardCost + " channel points !");
-        handleResponse(httpExchange, 200, "Potion effect successfully applied");
+
+        handleResponse(httpExchange, 200, "{\"status\": \"Potion effect successfully applied\"}");
 
     }
 

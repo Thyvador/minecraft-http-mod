@@ -69,7 +69,7 @@ public class WeatherHandler implements CustomHttpHandler{
 
         Minecraft.getInstance().player.sendChatMessage("User " + redeemedBy + " applied " + requestedWeather + " weather for " + rewardCost + " channel points !");
 
-        handleResponse(httpExchange, 200, "Weather effect successfully applied");
+        handleResponse(httpExchange, 200, "{\"status\": \"Weather effect successfully applied\"}");
     }
 
     private void setClearWeather(ClientWorldInfo clientWorldInfo) {
