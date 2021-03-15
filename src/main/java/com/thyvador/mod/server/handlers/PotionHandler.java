@@ -3,9 +3,11 @@ package com.thyvador.mod.server.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,8 +17,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class PotionHandler implements CustomHttpHandler {
 
@@ -64,53 +68,77 @@ public class PotionHandler implements CustomHttpHandler {
 
     @Override
     public void handlePostRequest(HttpExchange httpExchange) throws IOException {
-        logger.debug("POST " + httpExchange.getRequestURI());
-
-        ClientPlayerEntity player = Minecraft.getInstance().player;
-        if (player == null) {
-            handleResponse(httpExchange, 500, "player not found");
-            return;
-        }
-        JSONObject requestBody = getRequestBody(httpExchange);
-
-        Effect effect;
-        int durationInSeconds;
-        String effectName = requestBody.getString(EFFECT);
         try {
+            logger.debug("POST " + httpExchange.getRequestURI());
 
-            if (effectName == null) {
+            String[] playerNames = Minecraft.getInstance().getIntegratedServer().getPlayerList().getOnlinePlayerNames();
+            if (playerNames.length == 0) {
+                handleResponse(httpExchange, 500, "player not found");
+                return;
+            }
+
+            JSONObject requestBody = getRequestBody(httpExchange);
+
+            Effect effect;
+            int durationInSeconds;
+            String effectName = requestBody.getString(EFFECT);
+            try {
+
+                if (effectName == null) {
+                    handleResponse(httpExchange, 400, "effect is missing");
+                    return;
+                }
+                effect = EFFECTS.get(effectName);
+
+                if (effect == null) {
+                    handleResponse(httpExchange, 400, "effect " + effectName + " foes not exist");
+                    return;
+                }
+            } catch (JSONException e) {
+
+                logger.error("Effect is missing");
                 handleResponse(httpExchange, 400, "effect is missing");
                 return;
             }
-            effect = EFFECTS.get(effectName);
+            try {
 
-            if (effect == null) {
-                handleResponse(httpExchange, 400, "effect " + effectName + " foes not exist");
+                durationInSeconds = requestBody.getInt(DURATION);
+            } catch (JSONException e) {
+
+                logger.error("Duration is missing");
+                handleResponse(httpExchange, 400, "duration is missing");
                 return;
             }
-        } catch (JSONException e) {
+            String redeemedBy = requestBody.getString("redeemedBy");
+            String rewardCost = requestBody.getString("rewardCost");
+            String playerName = Minecraft.getInstance().player.getName().getString();
+            EffectInstance effectInstance = new EffectInstance(effect, durationInSeconds * 20, 0);
+            Arrays.stream(playerNames)
+                    .filter(name -> name.equals(playerName))
+                    .findAny()
+                    .ifPresent(name -> applyPotionToPLayer(name, effectInstance, redeemedBy, rewardCost));
 
-            handleResponse(httpExchange, 400, "effect is missing");
-            return;
+
+            Minecraft.getInstance().player.sendChatMessage(
+                    String.format(
+                            "User %s applied %s potion effect for %s channel points !",
+                            redeemedBy,
+                            effectName.toLowerCase().replaceAll("_", " "),
+                            rewardCost));
+
+            handleResponse(httpExchange, 200, "{\"status\": \"Potion effect successfully applied\"}");
+
+        } catch (Exception exception) {
+            handleResponse(httpExchange, 500, exception.getMessage());
         }
-        try {
 
-            durationInSeconds = requestBody.getInt(DURATION);
-        } catch (JSONException e) {
+    }
 
-
-            handleResponse(httpExchange, 400, "duration is missing");
-            return;
-        }
-
-        String redeemedBy = requestBody.getString("redeemedBy");
-        String rewardCost = requestBody.getString("rewardCost");
-
+    private void applyPotionToPLayer(String name, EffectInstance effectInstance, String redeemedBy, String rewardCost) {
+        ServerPlayerEntity player = Minecraft.getInstance().getIntegratedServer().getPlayerList().getPlayerByUsername(name);
         // EffectInstance expects a duration in ticks (1 tick = 1/20 second)
-        player.addPotionEffect(new EffectInstance(effect, durationInSeconds * 20, 0));
-        Minecraft.getInstance().player.sendChatMessage("User " + redeemedBy + " applied " + effectName.toLowerCase().replaceAll("_", " ") + " potion effect for " + rewardCost + " channel points !");
-
-        handleResponse(httpExchange, 200, "{\"status\": \"Potion effect successfully applied\"}");
+        player.addPotionEffect(effectInstance);
+        logger.info("Effect applied to " + player.getDisplayName());
 
     }
 
