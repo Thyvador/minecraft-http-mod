@@ -26,6 +26,7 @@ public class PotionHandler implements CustomHttpHandler {
 
     private static final String EFFECT = "effect";
     private static final String DURATION = "duration";
+    private static final String AMPLIFIER = "duration";
 
     private final Logger logger = LogManager.getLogger();
     private static final Map<String, Effect> EFFECTS = new HashMap<>();
@@ -81,6 +82,7 @@ public class PotionHandler implements CustomHttpHandler {
 
             Effect effect;
             int durationInSeconds;
+            int amplifier = 0;
             String effectName = requestBody.getString(EFFECT);
             try {
 
@@ -109,10 +111,18 @@ public class PotionHandler implements CustomHttpHandler {
                 handleResponse(httpExchange, 400, "duration is missing");
                 return;
             }
+            try {
+
+                amplifier = requestBody.getInt(AMPLIFIER) - 1;
+            } catch (JSONException ignored) {
+            }
+            if (amplifier < 0) {
+                amplifier = 0;
+            }
             String redeemedBy = requestBody.getString("redeemedBy");
             String rewardCost = requestBody.getString("rewardCost");
             String playerName = Minecraft.getInstance().player.getName().getString();
-            EffectInstance effectInstance = new EffectInstance(effect, durationInSeconds * 20, 0);
+            EffectInstance effectInstance = new EffectInstance(effect, durationInSeconds * 20, amplifier);
             Arrays.stream(playerNames)
                     .filter(name -> name.equals(playerName))
                     .findAny()
@@ -129,6 +139,7 @@ public class PotionHandler implements CustomHttpHandler {
             handleResponse(httpExchange, 200, "{\"status\": \"Potion effect successfully applied\"}");
 
         } catch (Exception exception) {
+            logger.error(exception.getMessage());
             handleResponse(httpExchange, 500, exception.getMessage());
         }
 
