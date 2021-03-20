@@ -5,7 +5,7 @@
 - Download Minecraft Forge at the official website.
 - Make sure you double check your version, so you download the correct one. The list of versions can be found along the left hand side.
 - Open the downloaded installer, which will bring up the installation process. Be sure to confirm with ‘Install Client’ still selected and press ‘OK’.
-- Place the jar file (that you can find in the release directory) in `%AppData%\.minecraft\mods\` for Windows users or `~/.minecraft/mods/`
+- Place the jar file (that you can find in the release directory) in `%AppData%\.minecraft\mods\` for Windows users or `~/.minecraft/mods/` for linux users
 
 ## Develop
 
