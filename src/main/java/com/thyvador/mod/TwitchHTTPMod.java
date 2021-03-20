@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod("examplemod")
-public class ExampleMod {
+@Mod("twitchhttpmod")
+public class TwitchHTTPMod {
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public ExampleMod() throws IOException {
+    public TwitchHTTPMod() throws IOException {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         // Register the enqueueIMC method for modloading

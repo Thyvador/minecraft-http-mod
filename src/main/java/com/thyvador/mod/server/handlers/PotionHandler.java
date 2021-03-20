@@ -2,12 +2,10 @@ package com.thyvador.mod.server.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.text.TranslationTextComponent;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class PotionHandler implements CustomHttpHandler {
 
@@ -119,8 +116,8 @@ public class PotionHandler implements CustomHttpHandler {
             if (amplifier < 0) {
                 amplifier = 0;
             }
-            String redeemedBy = requestBody.getString("redeemedBy");
-            String rewardCost = requestBody.getString("rewardCost");
+                String redeemedBy = requestBody.getString("redeemedBy");
+                String rewardCost = requestBody.getString("rewardCost");
             String playerName = Minecraft.getInstance().player.getName().getString();
             EffectInstance effectInstance = new EffectInstance(effect, durationInSeconds * 20, amplifier);
             Arrays.stream(playerNames)
