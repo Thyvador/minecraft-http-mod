@@ -5,7 +5,7 @@
 - Download Minecraft Forge at the official website.
 - Make sure you double check your version, so you download the correct one. The list of versions can be found along the left hand side.
 - Open the downloaded installer, which will bring up the installation process. Be sure to confirm with ‘Install Client’ still selected and press ‘OK’.
-- Place the jar file (that you can find in the release directory) in `%AppData%\.minecraft\mods\` for Windows users or `~/.minecraft/mods/` for linux users
+- Place the plugin jar archive (you can download it [here](https://github.com/Thyvador/minecraft-http-mod/releases/download/1.0.0/twitvhhttpmod-1.0.jar)) in `%AppData%\.minecraft\mods\` for Windows users or `~/.minecraft/mods/` for linux users
 
 ## Develop
 
@@ -34,15 +34,3 @@ If at any point you are missing libraries in your IDE, or you've run into proble
 Should it still not work, 
 Refer to #ForgeGradle on EsperNet for more information about the gradle environment.
 or the Forge Project Discord discord.gg/UvedJ9m
-
-Forge source installation
-=========================
-MinecraftForge ships with this code and installs it as part of the forge
-installation process, no further action is required on your part.
-
-LexManos' Install Video
-=======================
-https://www.youtube.com/watch?v=8VEdtQLuLO0&feature=youtu.be
-
-For more details update more often refer to the Forge Forums:
-http://www.minecraftforge.net/forum/index.php/topic,14048.0.html
