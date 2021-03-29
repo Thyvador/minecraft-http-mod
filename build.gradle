@@ -14,8 +14,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = '1.0'
-group = 'com.yourname.twitvhhttpmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'twitvhhttpmod'
+group = 'com.yourname.twitchhttpmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'twitchhttpmod'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
